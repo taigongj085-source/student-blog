@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>标签 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar(${navActive})}"></header>
+
+<main class="container">
+  <div class="page-title">
+    <h1>标签云</h1>
+    <p>点击标签查看相关文章</p>
+  </div>
+
+  <div class="tag-cloud" th:if="${tagCounts != null and !tagCounts.isEmpty()}">
+    <a class="tag" th:each="entry : ${tagCounts}"
+       th:href="@{/tags(name=${entry.key})}"
+       th:text="'#' + ${entry.key} + ' (' + ${entry.value} + ')'">#tag</a>
+  </div>
+  <p class="empty-tip" th:if="${tagCounts == null or tagCounts.isEmpty()}">暂无标签</p>
+
+  <section class="section" th:if="${curTag != null}">
+    <div class="section-head">
+      <h2 th:text="'🏷️ #' + ${curTag}">标签</h2>
+      <a th:href="@{/tags}">返回标签云</a>
+    </div>
+    <div class="post-grid" th:if="${posts != null and !posts.isEmpty()}">
+      <article class="post-card" th:each="p : ${posts}">
+        <a th:href="@{/post/{id}(id=${p.id})}">
+          <div class="post-cover" th:style="'background:'+${p.coverColor}" th:text="${p.coverEmoji}">📝</div>
+        </a>
+        <div class="post-body">
+          <div class="post-meta">
+            <span th:text="'📅 '+${#temporals.format(p.createTime,'yyyy-MM-dd')}">📅</span>
+            <span>📁 <a th:href="@{/categories(name=${p.category})}" th:text="${p.category}"></a></span>
+            <span th:text="'👁 '+${p.viewCount}">👁 0</span>
+          </div>
+          <h3><a th:href="@{/post/{id}(id=${p.id})}" th:text="${p.title}">标题</a></h3>
+          <p class="post-excerpt" th:text="${p.excerpt}">摘要</p>
+          <div class="post-tags">
+            <a class="tag" th:each="t : ${p.tagList}" th:href="@{/tags(name=${t})}" th:text="'#'+${t}">#tag</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    <p class="empty-tip" th:if="${posts == null or posts.isEmpty()}">该标签下暂无文章</p>
+  </section>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+</body>
+</html>

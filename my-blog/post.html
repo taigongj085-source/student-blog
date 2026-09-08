@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章详情 - 小白的博客</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container">
+    <div id="articleWrap"></div>
+
+    <section class="comments" id="comments" style="display:none">
+      <h2>💬 评论（<span id="commentCount">0</span>）</h2>
+      <div id="commentList"></div>
+      <div class="form-group" style="margin-top:16px">
+        <label>发表评论</label>
+        <input type="text" id="cName" placeholder="你的昵称" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);margin-bottom:10px">
+        <textarea id="cText" rows="3" placeholder="说点什么吧…"></textarea>
+      </div>
+      <button class="btn" id="submitComment">提交评论</button>
+      <p class="form-tip" id="cTip"></p>
+    </section>
+  </main>
+
+  <footer class="footer" id="footer"></footer>
+  <button id="backTop" title="返回顶部">↑</button>
+
+  <script src="js/blog.js"></script>
+  <script>
+    initPage("posts");
+
+    const id = Number(new URLSearchParams(location.search).get("id"));
+    const post = getPostById(id);
+    const wrap = document.getElementById("articleWrap");
+
+    if (!post) {
+      wrap.innerHTML = `<div class="article"><h1>文章不存在</h1><p><a href="posts.html">← 返回文章列表</a></p></div>`;
+    } else {
+      document.title = post.title + " - 小白的博客";
+      const sorted = [...POSTS].sort((a, b) => b.date.localeCompare(a.date));
+      const idx = sorted.findIndex(p => p.id === post.id);
+      const prev = sorted[idx - 1], next = sorted[idx + 1];
+
+      wrap.innerHTML = `
+      <article class="article">
+        <h1>${post.title}</h1>
+        <div class="post-meta">
+          <span>📅 ${formatDate(post.date)}</span>
+          <span>📁 <a href="categories.html#${encodeURIComponent(post.category)}">${post.category}</a></span>
+        </div>
+        <div class="article-cover" style="background:${post.color}">${post.emoji}</div>
+        <div class="article-content">${post.content}</div>
+        <div class="post-tags" style="margin-top:24px">
+          ${post.tags.map(t => `<a class="tag" href="tags.html#${encodeURIComponent(t)}">#${t}</a>`).join("")}
+        </div>
+        <div class="article-nav">
+          ${prev ? `<a href="post.html?id=${prev.id}">← 上一篇：${prev.title}</a>` : "<span></span>"}
+          ${next ? `<a href="post.html?id=${next.id}" style="text-align:right">下一篇：${next.title} →</a>` : "<span></span>"}
+        </div>
+      </article>`;
+
+      // ---- 评论区（localStorage 模拟） ----
+      const storeKey = "comments_" + post.id;
+      document.getElementById("comments").style.display = "block";
+      const loadComments = () => JSON.parse(localStorage.getItem(storeKey) || "[]");
+      const seedKey = "seeded_" + post.id;
+      if (!localStorage.getItem(seedKey)) {
+        localStorage.setItem(storeKey, JSON.stringify([
+          { name: "访客小明", text: "写得很清楚，学到了很多！", time: "2026-08-02 10:24" },
+          { name: "路过的程序员", text: "期待后续更新 👍", time: "2026-08-03 21:05" }
+        ]));
+        localStorage.setItem(seedKey, "1");
+      }
+      const renderComments = () => {
+        const list = loadComments();
+        document.getElementById("commentCount").textContent = list.length;
+        document.getElementById("commentList").innerHTML = list.length
+          ? list.map(c => `<div class="comment-item"><span class="who">${c.name}</span><span class="when">${c.time}</span><p>${c.text}</p></div>`).join("")
+          : `<p class="empty-tip">还没有评论，来抢沙发～</p>`;
+      };
+      renderComments();
+
+      document.getElementById("submitComment").onclick = () => {
+        const name = document.getElementById("cName").value.trim();
+        const text = document.getElementById("cText").value.trim();
+        const tip = document.getElementById("cTip");
+        if (!name || !text) {
+          tip.className = "form-tip err"; tip.textContent = "昵称和评论内容都不能为空"; return;
+        }
+        const list = loadComments();
+        const now = new Date();
+        list.push({ name, text, time: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}` });
+        localStorage.setItem(storeKey, JSON.stringify(list));
+        document.getElementById("cText").value = "";
+        tip.className = "form-tip ok"; tip.textContent = "评论成功！";
+        renderComments();
+      };
+    }
+  </script>
+</body>
+</html>

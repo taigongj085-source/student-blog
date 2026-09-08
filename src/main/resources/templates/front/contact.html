@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>联系我 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar(${navActive})}"></header>
+
+<main class="container">
+  <div class="page-title">
+    <h1>联系我</h1>
+    <p>有问题或建议？给我留言，也可以直接发邮件</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label for="name">你的称呼 *</label>
+      <input type="text" id="name" placeholder="怎么称呼你？">
+    </div>
+    <div class="form-group">
+      <label for="email">邮箱 *</label>
+      <input type="email" id="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label for="subject">主题</label>
+      <input type="text" id="subject" placeholder="想聊点什么？">
+    </div>
+    <div class="form-group">
+      <label for="message">留言内容 *</label>
+      <textarea id="message" rows="5" placeholder="写下你的想法…"></textarea>
+    </div>
+    <button class="btn" type="button" id="sendBtn">发送留言 ✉️</button>
+    <p class="form-tip" id="formTip"></p>
+
+    <p style="margin-top:24px;color:var(--text-light);font-size:14px">
+      其他联系方式：📧 hello@xiaobai.blog · 🐙 github.com/xiaobai
+    </p>
+  </div>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+
+<script>
+  document.getElementById('sendBtn').addEventListener('click', function () {
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var message = document.getElementById('message').value.trim();
+    var tip = document.getElementById('formTip');
+    if (!name || !email || !message) {
+      tip.className = 'form-tip err';
+      tip.textContent = '带 * 的字段不能为空';
+      return;
+    }
+    tip.className = 'form-tip ok';
+    tip.textContent = '感谢留言！（演示站点未接入后端存储，内容仅在本页提示）';
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('subject').value = '';
+    document.getElementById('message').value = '';
+  });
+</script>
+</body>
+</html>

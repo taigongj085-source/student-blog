@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小白的博客 - 首页</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <section class="hero">
+    <h1>你好，欢迎来到小白的博客 👋</h1>
+    <p>这里记录前端开发、工程实践与成长思考。用最朴素的 HTML / CSS / JavaScript，写最认真的技术文章。</p>
+    <a class="btn" href="posts.html">开始阅读 →</a>
+  </section>
+
+  <main class="container">
+    <section class="section">
+      <div class="section-head">
+        <h2>📰 最新文章</h2>
+        <a href="posts.html">查看全部 →</a>
+      </div>
+      <div class="post-grid" id="latestPosts"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>📁 文章分类</h2>
+        <a href="categories.html">全部分类 →</a>
+      </div>
+      <div class="cat-grid" id="catPreview"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>🏷️ 热门标签</h2>
+        <a href="tags.html">全部标签 →</a>
+      </div>
+      <div class="tag-cloud" id="tagPreview"></div>
+    </section>
+  </main>
+
+  <footer class="footer" id="footer"></footer>
+  <button id="backTop" title="返回顶部">↑</button>
+
+  <script src="js/blog.js"></script>
+  <script>
+    initPage("index");
+
+    // 最新文章（按日期倒序取前 6 篇）
+    const latest = [...POSTS].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+    document.getElementById("latestPosts").innerHTML = latest.map(postCardHTML).join("");
+
+    // 分类预览（取有文章的分类）
+    document.getElementById("catPreview").innerHTML = CATEGORIES
+      .map(c => ({ ...c, count: getPostsByCategory(c.name).length }))
+      .filter(c => c.count > 0)
+      .slice(0, 3)
+      .map(c => `
+        <div class="cat-card">
+          <div class="icon">${c.icon}</div>
+          <h3><a href="categories.html#${encodeURIComponent(c.name)}">${c.name}</a></h3>
+          <p>${c.desc}</p>
+          <span class="cat-count">${c.count} 篇文章</span>
+        </div>`).join("");
+
+    // 标签预览（取前 8 个）
+    const tagMap = getAllTags();
+    document.getElementById("tagPreview").innerHTML =
+      Object.keys(tagMap).slice(0, 8)
+        .map(t => `<a class="tag" href="tags.html#${encodeURIComponent(t)}">#${t} (${tagMap[t]})</a>`)
+        .join("");
+  </script>
+</body>
+</html>

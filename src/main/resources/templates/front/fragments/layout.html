@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>layout</title>
+</head>
+<body>
+
+<!-- ========== 顶部导航 ========== -->
+<header class="navbar" th:fragment="navbar(active)">
+  <div class="container nav-inner">
+    <a class="logo" th:href="@{/}">小白的<span>博客</span></a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="菜单">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a th:href="@{/}" th:classappend="${active == 'home'} ? ' active'">首页</a></li>
+      <li><a th:href="@{/posts}" th:classappend="${active == 'posts'} ? ' active'">文章</a></li>
+      <li><a th:href="@{/categories}" th:classappend="${active == 'categories'} ? ' active'">分类</a></li>
+      <li><a th:href="@{/tags}" th:classappend="${active == 'tags'} ? ' active'">标签</a></li>
+      <li><a th:href="@{/archives}" th:classappend="${active == 'archives'} ? ' active'">归档</a></li>
+      <li><a th:href="@{/about}" th:classappend="${active == 'about'} ? ' active'">关于</a></li>
+      <li><a th:href="@{/contact}" th:classappend="${active == 'contact'} ? ' active'">联系</a></li>
+      <li class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" type="button">🌙 深色</button>
+        <th:block th:if="${loginUser != null}">
+          <a class="nav-write" th:href="@{/post/new}">✍️ 写文章</a>
+          <div class="user-chip">
+            <button class="user-chip-btn" type="button" id="userChipBtn">
+              <span class="user-avatar" th:style="'background:' + ${loginUser.color}"
+                    th:text="${loginUser.avatar}">😀</span>
+              <span class="user-name" th:text="${loginUser.username}">用户</span>
+              <span class="chevron">▾</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+              <a th:href="@{/profile}">个人中心</a>
+              <a th:href="@{/post/new}">写文章</a>
+              <a th:if="${loginUser.role != null and loginUser.role == 1}" th:href="@{/admin}">管理后台</a>
+              <a th:href="@{/logout}">退出</a>
+            </div>
+          </div>
+        </th:block>
+        <th:block th:if="${loginUser == null}">
+          <a class="nav-auth" th:href="@{/login}">登录</a>
+          <a class="nav-auth btn-register" th:href="@{/login(tab='register')}">注册</a>
+        </th:block>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<!-- ========== 页脚 ========== -->
+<footer class="footer" th:fragment="footer">
+  <div class="container">
+    <div class="links">
+      <a th:href="@{/}">首页</a>
+      <a th:href="@{/posts}">文章</a>
+      <a th:href="@{/categories}">分类</a>
+      <a th:href="@{/tags}">标签</a>
+      <a th:href="@{/about}">关于</a>
+      <a th:href="@{/contact}">联系</a>
+    </div>
+    <p>© 2026 小白的博客 · Spring Boot + Thymeleaf · 仅供学习交流</p>
+  </div>
+</footer>
+
+</body>
+</html>

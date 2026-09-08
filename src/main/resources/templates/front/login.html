@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 / 注册 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar('login')}"></header>
+
+<main class="container">
+  <div class="page-title">
+    <h1>欢迎回来</h1>
+    <p>登录后可以写文章、评论与收藏</p>
+  </div>
+
+  <div class="form-card">
+    <div class="alert-error" th:if="${errorMsg}" th:text="${errorMsg}"></div>
+
+    <div class="login-tabs">
+      <button type="button" data-tab="login"
+              th:classappend="${tab == null or tab == 'login'} ? ' active'">登录</button>
+      <button type="button" data-tab="register"
+              th:classappend="${tab == 'register'} ? ' active'">注册</button>
+    </div>
+
+    <div class="login-pane" data-pane="login"
+         th:classappend="${tab == null or tab == 'login'} ? ' active'">
+      <form th:action="@{/doLogin}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" name="redirect" th:value="${redirect}">
+        <div class="form-group">
+          <label for="loginUsername">昵称</label>
+          <input type="text" id="loginUsername" name="username" required autocomplete="username" placeholder="你的昵称">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">密码</label>
+          <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="密码">
+        </div>
+        <button type="submit" class="btn" style="width:100%">登录</button>
+      </form>
+    </div>
+
+    <div class="login-pane" data-pane="register"
+         th:classappend="${tab == 'register'} ? ' active'">
+      <form th:action="@{/doRegister}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" name="redirect" th:value="${redirect}">
+        <div class="form-group">
+          <label for="regUsername">昵称</label>
+          <input type="text" id="regUsername" name="username" required maxlength="12" autocomplete="username" placeholder="2-12 个字符">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">密码</label>
+          <input type="password" id="regPassword" name="password" required minlength="6" autocomplete="new-password" placeholder="至少 6 位">
+        </div>
+        <div class="form-group">
+          <label for="regPassword2">确认密码</label>
+          <input type="password" id="regPassword2" name="password2" required minlength="6" autocomplete="new-password" placeholder="再次输入密码">
+        </div>
+        <button type="submit" class="btn" style="width:100%">注册并登录</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+</body>
+</html>

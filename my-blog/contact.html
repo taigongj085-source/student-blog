@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>联系我 - 小白的博客</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>联系我</h1>
+      <p>有问题或建议？给我留言，也可以直接发邮件</p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-group">
+        <label>你的称呼 *</label>
+        <input type="text" id="name" placeholder="怎么称呼你？">
+      </div>
+      <div class="form-group">
+        <label>邮箱 *</label>
+        <input type="email" id="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>主题</label>
+        <input type="text" id="subject" placeholder="想聊点什么？">
+      </div>
+      <div class="form-group">
+        <label>留言内容 *</label>
+        <textarea id="message" rows="5" placeholder="写下你的想法…"></textarea>
+      </div>
+      <button class="btn" id="sendBtn">发送留言 ✉️</button>
+      <p class="form-tip" id="formTip"></p>
+
+      <p style="margin-top:24px;color:var(--text-light);font-size:14px">
+        其他联系方式：📧 hello@example.com · 🐙 github.com/example
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer" id="footer"></footer>
+  <button id="backTop" title="返回顶部">↑</button>
+
+  <script src="js/blog.js"></script>
+  <script>
+    initPage("contact");
+
+    document.getElementById("sendBtn").onclick = () => {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const message = document.getElementById("message").value.trim();
+      const tip = document.getElementById("formTip");
+
+      if (!name || !email || !message) {
+        tip.className = "form-tip err";
+        tip.textContent = "带 * 的字段不能为空";
+        return;
+      }
+      if (!/^[\w.+-]+@[\w-]+\.[\w.]+$/.test(email)) {
+        tip.className = "form-tip err";
+        tip.textContent = "邮箱格式不正确";
+        return;
+      }
+
+      // 模拟保存留言
+      const msgs = JSON.parse(localStorage.getItem("messages") || "[]");
+      msgs.push({ name, email, subject: document.getElementById("subject").value.trim(), message, time: new Date().toLocaleString() });
+      localStorage.setItem("messages", JSON.stringify(msgs));
+
+      tip.className = "form-tip ok";
+      tip.textContent = "留言发送成功！感谢你的反馈 🎉";
+      ["name", "email", "subject", "message"].forEach(id => document.getElementById(id).value = "");
+    };
+  </script>
+</body>
+</html>

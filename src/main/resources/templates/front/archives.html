@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>归档 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar(${navActive})}"></header>
+
+<main class="container">
+  <div class="page-title">
+    <h1>文章归档</h1>
+    <p>按时间回顾写作轨迹</p>
+  </div>
+
+  <section class="section" th:if="${archives != null and !archives.isEmpty()}">
+    <div class="archive-block" th:each="entry : ${archives}">
+      <h2 th:text="${entry.key}">2026-08</h2>
+      <ul class="archive-list">
+        <li th:each="p : ${entry.value}">
+          <span class="date" th:text="${#temporals.format(p.createTime,'MM-dd')}">08-01</span>
+          <a th:href="@{/post/{id}(id=${p.id})}" th:text="${p.title}">标题</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <p class="empty-tip" th:if="${archives == null or archives.isEmpty()}">暂无归档内容</p>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+</body>
+</html>

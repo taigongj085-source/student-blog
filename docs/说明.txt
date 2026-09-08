@@ -1,0 +1,25 @@
+技术要求：
+springboot4
+mysql8
+mybatis-plus
+redis
+thymeleaf
+优先使用hutool工具类库
+spring security实现认证、简单授权功能
+
+单体架构
+
+需求：
+个人博客是一个基于springboot4的单体架构项目，用于个人的博客发布和分享。
+参考forum原型页面，实现用户注册、登录、发帖、回复、点赞、收藏等功能。
+resource/static 静态资源
+resource/templates 模板
+resource/templates/back 管理后台
+resource/templates/front 网站前台页面
+
+sql脚本写在docs里面，sql脚本包含创建数据库、使用数据库命令
+
+参考页面my-blog静态页面
+---
+SQL 脚本：docs/schema.sql
+启动说明：见 README.md

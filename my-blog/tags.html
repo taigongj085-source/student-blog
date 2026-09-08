@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>标签 - 小白的博客</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>标签云</h1>
+      <p>共 <span id="tagCount">0</span> 个标签，点击标签查看相关文章</p>
+    </div>
+
+    <section class="section">
+      <div class="tag-cloud" id="tagCloud"></div>
+    </section>
+
+    <section class="section" id="tagPosts" style="display:none">
+      <div class="section-head">
+        <h2 id="tagPostsTitle"></h2>
+        <a href="tags.html">清除筛选 ✕</a>
+      </div>
+      <div class="post-grid" id="tagPostList"></div>
+    </section>
+  </main>
+
+  <footer class="footer" id="footer"></footer>
+  <button id="backTop" title="返回顶部">↑</button>
+
+  <script src="js/blog.js"></script>
+  <script>
+    initPage("tags");
+
+    const tagMap = getAllTags();
+    const tags = Object.keys(tagMap);
+    document.getElementById("tagCount").textContent = tags.length;
+    document.getElementById("tagCloud").innerHTML = tags
+      .map(t => `<a class="tag" href="tags.html#${encodeURIComponent(t)}">#${t}（${tagMap[t]}）</a>`)
+      .join("");
+
+    function showTag() {
+      const tag = decodeURIComponent(location.hash.slice(1));
+      const sec = document.getElementById("tagPosts");
+      if (!tag) { sec.style.display = "none"; return; }
+      const list = getPostsByTag(tag).sort((a, b) => b.date.localeCompare(a.date));
+      document.getElementById("tagPostsTitle").textContent = `标签「#${tag}」下的文章（${list.length}）`;
+      document.getElementById("tagPostList").innerHTML = list.length
+        ? list.map(postCardHTML).join("")
+        : `<p class="empty-tip">该标签下暂无文章</p>`;
+      sec.style.display = "block";
+      sec.scrollIntoView({ behavior: "smooth" });
+    }
+    window.addEventListener("hashchange", showTag);
+    showTag();
+  </script>
+</body>
+</html>

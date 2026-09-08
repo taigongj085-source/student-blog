@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关于我 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar(${navActive})}"></header>
+
+<main class="container">
+  <div class="page-title">
+    <h1>关于我</h1>
+    <p>一个热爱记录与分享的开发者</p>
+  </div>
+
+  <div class="about-grid">
+    <div class="avatar">👨‍💻</div>
+    <div class="about-card">
+      <h2>你好，我是小白 👋</h2>
+      <p>一名 Web 开发者，喜欢用简单的技术解决实际问题。这个博客基于 Spring Boot + Thymeleaf 构建，配合 Redis 做热点与统计缓存。</p>
+      <p>我相信「输出是最好的学习」，所以坚持在这里写技术文章、记录踩坑经验、分享成长思考。希望这些内容对你也有帮助。</p>
+
+      <h2 style="margin-top:24px">📊 站点数据</h2>
+      <p th:if="${stats != null}">
+        文章 <strong th:text="${stats.posts}">0</strong> 篇 ·
+        评论 <strong th:text="${stats.comments}">0</strong> 条 ·
+        用户 <strong th:text="${stats.users}">0</strong> 人 ·
+        今日更新 <strong th:text="${stats.todayPosts}">0</strong> 篇
+      </p>
+
+      <h2 style="margin-top:24px">🛠️ 技术栈</h2>
+      <div class="skill-list">
+        <span class="tag">Spring Boot</span>
+        <span class="tag">MyBatis-Plus</span>
+        <span class="tag">Thymeleaf</span>
+        <span class="tag">Redis</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">HTML/CSS/JS</span>
+      </div>
+
+      <h2 style="margin-top:24px">🎯 本站特色</h2>
+      <p>✅ 多页面结构：首页 / 文章 / 分类 / 标签 / 归档 / 关于 / 联系<br>
+         ✅ 深色模式：右上角一键切换，偏好会被记住<br>
+         ✅ 文章搜索与分类筛选<br>
+         ✅ 点赞、收藏与评论互动<br>
+         ✅ 响应式设计，手机也能正常浏览</p>
+
+      <p style="margin-top:16px">想和我交流？欢迎前往 <a th:href="@{/contact}">联系页面</a> ～</p>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+</body>
+</html>

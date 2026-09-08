@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <aside class="admin-side">
+    <div class="brand">小白博客 · 后台</div>
+    <a th:href="@{/admin}" th:classappend="${menu == 'dashboard'} ? ' active'">📊 仪表盘</a>
+    <a th:href="@{/admin/posts}" th:classappend="${menu == 'posts'} ? ' active'">📝 文章管理</a>
+    <a th:href="@{/admin/comments}" th:classappend="${menu == 'comments'} ? ' active'">💬 评论管理</a>
+    <a th:href="@{/admin/users}" th:classappend="${menu == 'users'} ? ' active'">👥 用户管理</a>
+    <a th:href="@{/}" target="_blank">🏠 前台首页</a>
+    <a th:href="@{/admin/logout}">🚪 退出</a>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-top">
+      <h1>仪表盘</h1>
+      <span th:if="${loginUser != null}" th:text="'你好，' + ${loginUser.username}">你好</span>
+    </div>
+
+    <div class="admin-stats" th:if="${stats != null}">
+      <div class="item">
+        <div class="n" th:text="${stats.posts}">0</div>
+        <div class="l">文章总数</div>
+      </div>
+      <div class="item">
+        <div class="n" th:text="${stats.comments}">0</div>
+        <div class="l">评论总数</div>
+      </div>
+      <div class="item">
+        <div class="n" th:text="${stats.users}">0</div>
+        <div class="l">用户总数</div>
+      </div>
+      <div class="item">
+        <div class="n" th:text="${stats.todayPosts}">0</div>
+        <div class="l">今日发文</div>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h3 style="margin:0 0 12px">快捷入口</h3>
+      <a class="admin-btn primary" th:href="@{/admin/posts}">管理文章</a>
+      <a class="admin-btn ghost" th:href="@{/admin/comments}">管理评论</a>
+      <a class="admin-btn ghost" th:href="@{/admin/users}">管理用户</a>
+      <a class="admin-btn ghost" th:href="@{/post/new}" target="_blank">去写文章</a>
+    </div>
+  </main>
+</div>
+</body>
+</html>

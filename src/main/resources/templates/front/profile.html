@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人中心 - 小白的博客</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar(${navActive})}"></header>
+
+<main class="container">
+  <div class="page-title">
+    <h1>个人中心</h1>
+    <p>管理你的文章与互动</p>
+  </div>
+
+  <div class="profile-header" th:if="${loginUser != null}">
+    <div class="big-avatar" th:style="'background:' + ${loginUser.color}" th:text="${loginUser.avatar}">😀</div>
+    <div>
+      <h2 th:text="${loginUser.username}" style="margin:0 0 6px">用户名</h2>
+      <p style="color:var(--text-light);margin:0" th:text="${loginUser.bio != null and !#strings.isEmpty(loginUser.bio)} ? ${loginUser.bio} : '这个人很懒，什么都没写～'">简介</p>
+      <p style="margin-top:8px">
+        <a class="btn" th:href="@{/post/new}" style="padding:6px 16px;font-size:13px">写文章</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="my-tabs">
+    <a th:href="@{/profile(tab='posts')}" th:classappend="${tab == 'posts'} ? ' active'"
+       th:text="'我的文章 (' + ${#lists.size(myPosts)} + ')'">我的文章</a>
+    <a th:href="@{/profile(tab='comments')}" th:classappend="${tab == 'comments'} ? ' active'"
+       th:text="'我的评论 (' + ${#lists.size(myComments)} + ')'">我的评论</a>
+    <a th:href="@{/profile(tab='likes')}" th:classappend="${tab == 'likes'} ? ' active'"
+       th:text="'我的点赞 (' + ${#lists.size(myLikes)} + ')'">我的点赞</a>
+    <a th:href="@{/profile(tab='favorites')}" th:classappend="${tab == 'favorites'} ? ' active'"
+       th:text="'我的收藏 (' + ${#lists.size(myFavorites)} + ')'">我的收藏</a>
+  </div>
+
+  <!-- 我的文章 -->
+  <section th:if="${tab == 'posts'}">
+    <div th:if="${myPosts != null and !myPosts.isEmpty()}">
+      <a class="simple-item" th:each="p : ${myPosts}" th:href="@{/post/{id}(id=${p.id})}">
+        <div class="s-title" th:text="${p.title}">标题</div>
+        <div class="s-meta">
+          <span th:text="${#temporals.format(p.createTime,'yyyy-MM-dd')}">日期</span>
+          · <span th:text="${p.category}">分类</span>
+          · 👁 <span th:text="${p.viewCount}">0</span>
+          · ❤️ <span th:text="${p.likeCount}">0</span>
+        </div>
+      </a>
+    </div>
+    <p class="empty-tip" th:if="${myPosts == null or myPosts.isEmpty()}">还没有发布文章</p>
+  </section>
+
+  <!-- 我的评论 -->
+  <section th:if="${tab == 'comments'}">
+    <div th:if="${myComments != null and !myComments.isEmpty()}">
+      <a class="simple-item" th:each="c : ${myComments}" th:href="@{/post/{id}(id=${c.postId})}">
+        <div class="s-title" th:text="${c.content}">评论内容</div>
+        <div class="s-meta">
+          <span th:text="${#temporals.format(c.createTime,'yyyy-MM-dd HH:mm')}">时间</span>
+          <span th:if="${c.postTitle != null}"> · 文章：<span th:text="${c.postTitle}"></span></span>
+        </div>
+      </a>
+    </div>
+    <p class="empty-tip" th:if="${myComments == null or myComments.isEmpty()}">还没有发表评论</p>
+  </section>
+
+  <!-- 我的点赞 -->
+  <section th:if="${tab == 'likes'}">
+    <div th:if="${myLikes != null and !myLikes.isEmpty()}">
+      <a class="simple-item" th:each="p : ${myLikes}" th:href="@{/post/{id}(id=${p.id})}">
+        <div class="s-title" th:text="${p.title}">标题</div>
+        <div class="s-meta">
+          <span th:text="${p.category}">分类</span>
+          · ❤️ <span th:text="${p.likeCount}">0</span>
+        </div>
+      </a>
+    </div>
+    <p class="empty-tip" th:if="${myLikes == null or myLikes.isEmpty()}">还没有点赞过文章</p>
+  </section>
+
+  <!-- 我的收藏 -->
+  <section th:if="${tab == 'favorites'}">
+    <div th:if="${myFavorites != null and !myFavorites.isEmpty()}">
+      <a class="simple-item" th:each="p : ${myFavorites}" th:href="@{/post/{id}(id=${p.id})}">
+        <div class="s-title" th:text="${p.title}">标题</div>
+        <div class="s-meta">
+          <span th:text="${p.category}">分类</span>
+          · ⭐ <span th:text="${p.favoriteCount}">0</span>
+        </div>
+      </a>
+    </div>
+    <p class="empty-tip" th:if="${myFavorites == null or myFavorites.isEmpty()}">还没有收藏文章</p>
+  </section>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+</body>
+</html>

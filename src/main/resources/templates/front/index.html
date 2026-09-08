@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小白的博客 - 首页</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/css/extra.css}" rel="stylesheet">
+  <script th:src="@{/js/common.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{front/fragments/layout :: navbar(${navActive})}"></header>
+
+<section class="hero">
+  <h1>你好，欢迎来到小白的博客 👋</h1>
+  <p>这里记录前端开发、工程实践与成长思考。用认真的态度，写好看的技术文章。</p>
+  <a class="btn" th:href="@{/posts}">开始阅读 →</a>
+</section>
+
+<main class="container">
+  <section class="section">
+    <div class="section-head">
+      <h2>📰 最新文章</h2>
+      <a th:href="@{/posts}">查看全部 →</a>
+    </div>
+    <div class="post-grid" th:if="${posts != null and !posts.isEmpty()}">
+      <article class="post-card" th:each="p : ${posts}">
+        <a th:href="@{/post/{id}(id=${p.id})}">
+          <div class="post-cover" th:style="'background:'+${p.coverColor}" th:text="${p.coverEmoji}">📝</div>
+        </a>
+        <div class="post-body">
+          <div class="post-meta">
+            <span th:text="'📅 '+${#temporals.format(p.createTime,'yyyy-MM-dd')}">📅</span>
+            <span>📁 <a th:href="@{/categories(name=${p.category})}" th:text="${p.category}"></a></span>
+            <span th:text="'👁 '+${p.viewCount}">👁 0</span>
+          </div>
+          <h3><a th:href="@{/post/{id}(id=${p.id})}" th:text="${p.title}">标题</a></h3>
+          <p class="post-excerpt" th:text="${p.excerpt}">摘要</p>
+          <div class="post-tags">
+            <a class="tag" th:each="t : ${p.tagList}" th:href="@{/tags(name=${t})}" th:text="'#'+${t}">#tag</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    <p class="empty-tip" th:if="${posts == null or posts.isEmpty()}">暂无文章，快去写一篇吧～</p>
+
+    <div class="pager" th:if="${page != null and page.pages > 1}">
+      <a th:if="${page.current > 1}"
+         th:href="@{/(page=${page.current - 1},cat=${curCat},q=${keyword},sort=${curSort})}">上一页</a>
+      <span th:text="'第 ' + ${page.current} + ' / ' + ${page.pages} + ' 页'"></span>
+      <a th:if="${page.current < page.pages}"
+         th:href="@{/(page=${page.current + 1},cat=${curCat},q=${keyword},sort=${curSort})}">下一页</a>
+    </div>
+  </section>
+
+  <section class="section" th:if="${categoryMeta != null}">
+    <div class="section-head">
+      <h2>📁 文章分类</h2>
+      <a th:href="@{/categories}">全部分类 →</a>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card" th:each="m : ${categoryMeta}">
+        <div class="icon" th:text="${m.icon()}">💻</div>
+        <h3><a th:href="@{/categories(name=${m.name()})}" th:text="${m.name()}">分类</a></h3>
+        <p th:text="${m.desc()}">描述</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" th:if="${hotPosts != null and !hotPosts.isEmpty()}">
+    <div class="section-head">
+      <h2>🔥 热门文章</h2>
+    </div>
+    <ul class="hot-list">
+      <li th:each="hp : ${hotPosts}">
+        <a th:href="@{/post/{id}(id=${hp.id})}" th:text="${hp.title}">标题</a>
+        <div class="meta">
+          <span th:text="'👁 ' + ${hp.viewCount}">0</span>
+          ·
+          <span th:text="'❤️ ' + ${hp.likeCount}">0</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<footer th:replace="~{front/fragments/layout :: footer}"></footer>
+<button id="backTop" title="返回顶部">↑</button>
+</body>
+</html>
